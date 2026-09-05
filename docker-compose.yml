@@ -1,0 +1,7 @@
+services:
+  scraper-service:
+    build: ./scraper-service
+    volumes:
+      - ./shared:/shared:ro
+    ports:
+      - "8000:8000"
