@@ -68,13 +68,13 @@ async def scrape_standings() -> list[dict[str, Any]]:
         standings = []
         for row in rows:
             participant_el = await row.query_selector(
-                ".table_cell--participant .tableCellParticipant"
+                ".table__cell--participant .tableCellParticipant"
             )
             if participant_el is None:
                 continue
             team_name = (await participant_el.inner_text()).strip()
 
-            value_cells = await row.query_selector_all(".table_cell--value")
+            value_cells = await row.query_selector_all(".table__cell--value")
             values = [(await c.inner_text()).strip() for c in value_cells]
             if len(values) < 7:
                 continue
@@ -167,14 +167,10 @@ async def scrape_head_to_head(
     ]
 
 
-async def scrape_matches_by_date_range(date_from: str, date_to: str) -> list[dict[str, Any]]:
+async def _scrape_matches_from_url(url: str, d_from, d_to) -> list[dict[str, Any]]:
     async with scrape_page() as page:
-        await _goto_and_wait(page, URLS["fixtures"], MATCH_ROW_SELECTOR)
+        await _goto_and_wait(page, url, MATCH_ROW_SELECTOR)
         rows = await page.query_selector_all(MATCH_ROW_SELECTOR)
-
-        d_from = datetime.fromisoformat(date_from).date()
-        d_to = datetime.fromisoformat(date_to).date()
-
         matches = []
         for row in rows:
             m = await _extract_match_from_row(row)
@@ -182,6 +178,22 @@ async def scrape_matches_by_date_range(date_from: str, date_to: str) -> list[dic
             if parsed_date and d_from <= parsed_date <= d_to:
                 matches.append(m)
         return matches
+
+
+async def scrape_matches_by_date_range(date_from: str, date_to: str) -> list[dict[str, Any]]:
+    d_from = datetime.fromisoformat(date_from).date()
+    d_to = datetime.fromisoformat(date_to).date()
+    results, fixtures = await asyncio.gather(
+        _scrape_matches_from_url(URLS["results"], d_from, d_to),
+        _scrape_matches_from_url(URLS["fixtures"], d_from, d_to),
+    )
+    seen = set()
+    merged = []
+    for m in results + fixtures:
+        if m["match_id"] not in seen:
+            seen.add(m["match_id"])
+            merged.append(m)
+    return merged
 
 
 def _parse_stage_time(text: str | None, year: int | None = None) -> Any:
@@ -202,3 +214,18 @@ def _to_int(value: str) -> int:
         return int(value.strip())
     except ValueError:
         return 0
+
+
+async def debug_screenshot(url: str, filename: str) -> dict:
+    import os
+    os.makedirs("/app/debug", exist_ok=True)
+    async with scrape_page() as page:
+        await page.goto(url, wait_until="domcontentloaded")
+        await page.wait_for_timeout(3000)
+        await page.screenshot(path=f"/app/debug/{filename}", full_page=True)
+        html = await page.content()
+        with open(f"/app/debug/{filename}.html", "w", encoding="utf-8") as f:
+            f.write(html)
+        rows_q5 = len(await page.query_selector_all("div.ui-table__row"))
+        rows_q4 = len(await page.query_selector_all("div.event__match"))
+        return {"rows_ui_table": rows_q5, "rows_event_match": rows_q4}
