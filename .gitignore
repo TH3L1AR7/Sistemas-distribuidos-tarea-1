@@ -9,3 +9,4 @@ report/*.aux
 report/*.log
 report/*.out
 experiments/results/
+CLAUDE.md
