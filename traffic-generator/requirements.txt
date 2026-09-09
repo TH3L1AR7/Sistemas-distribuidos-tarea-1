@@ -1,0 +1,11 @@
+# Generador de Tráfico — dependencias
+#
+# El generador es un cliente puro: no expone API HTTP, por lo que no
+# necesita fastapi/uvicorn/pydantic ni redis. Todo lo demás (asyncio,
+# random, csv, json, statistics, argparse) es biblioteca estándar.
+#
+# Zipf se implementa a mano sobre `random` en vez de usar numpy: son ~10
+# líneas, evita una dependencia de ~20 MB en la imagen y deja el muestreo
+# explícito y auditable para el informe.
+
+httpx==0.27.2
