@@ -77,3 +77,12 @@ async def scrape(req: ScrapeRequest):
     except Exception as e:
         # En Entrega 2 esto se conecta con el mecanismo de fallback.
         raise HTTPException(status_code=502, detail=f"Error de scraping: {e}")
+
+
+@app.get("/debug")
+async def debug():
+    import os
+    os.makedirs("/app/debug", exist_ok=True)
+    r5 = await scraper.debug_screenshot(scraper.URLS["standings"], "standings.png")
+    r4 = await scraper.debug_screenshot(scraper.URLS["fixtures"], "fixtures.png")
+    return {"standings": r5, "fixtures": r4}
