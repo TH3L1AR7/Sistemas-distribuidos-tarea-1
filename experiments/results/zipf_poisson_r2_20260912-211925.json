@@ -1,0 +1,90 @@
+{
+  "config": {
+    "dist": "zipf",
+    "arrival": "poisson",
+    "rate": 2.0,
+    "duration": null,
+    "requests": 200,
+    "zipf_s": 1.5,
+    "seed": 42,
+    "max_inflight": 200,
+    "query_mix": {
+      "Q1": 0.2,
+      "Q2": 0.25,
+      "Q3": 0.15,
+      "Q4": 0.1,
+      "Q5": 0.3
+    },
+    "label": "zipf_poisson_r2"
+  },
+  "wall_time_s": 100.07,
+  "requests_sent": 200,
+  "arrivals_dropped": 0,
+  "hits": 190,
+  "misses": 10,
+  "errors": 0,
+  "hit_rate": 0.95,
+  "miss_rate": 0.05,
+  "error_rate": 0.0,
+  "throughput_rps": 1.999,
+  "latency_ms": {
+    "mean": 219.19,
+    "p50": 10.95,
+    "p95": 176.67,
+    "p99": 4764.45,
+    "max": 5491.9
+  },
+  "latency_hit_ms": {
+    "mean": 9.84,
+    "p50": 10.83,
+    "p95": 13.29
+  },
+  "latency_miss_ms": {
+    "mean": 4196.78,
+    "p50": 4000.43,
+    "p95": 5279.14
+  },
+  "cache_efficiency_ms": -200.493,
+  "per_query_type": {
+    "Q1": {
+      "requests": 37,
+      "hits": 37,
+      "misses": 0,
+      "hit_rate": 1.0,
+      "p50_ms": 10.59,
+      "p95_ms": 11.41
+    },
+    "Q2": {
+      "requests": 51,
+      "hits": 42,
+      "misses": 9,
+      "hit_rate": 0.8235294117647058,
+      "p50_ms": 12.83,
+      "p95_ms": 4516.93
+    },
+    "Q3": {
+      "requests": 27,
+      "hits": 27,
+      "misses": 0,
+      "hit_rate": 1.0,
+      "p50_ms": 10.1,
+      "p95_ms": 11.4
+    },
+    "Q4": {
+      "requests": 20,
+      "hits": 19,
+      "misses": 1,
+      "hit_rate": 0.95,
+      "p50_ms": 10.5,
+      "p95_ms": 289.76
+    },
+    "Q5": {
+      "requests": 65,
+      "hits": 65,
+      "misses": 0,
+      "hit_rate": 1.0,
+      "p50_ms": 11.09,
+      "p95_ms": 12.31
+    }
+  }
+}
