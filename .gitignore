@@ -8,5 +8,4 @@ venv/
 report/*.aux
 report/*.log
 report/*.out
-experiments/results/
 report/
