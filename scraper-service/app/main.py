@@ -7,14 +7,12 @@ from typing import Any
 
 from . import scraper
 
-# Precarga en memoria al iniciar (requisito del enunciado: nada de
-# consultas a una base de datos en tiempo de ejecución).
 TEAMS_PATH = Path(__file__).resolve().parents[2] / "shared" / "teams.json"
 _teams_by_code: dict[str, dict[str, str]] = {}
 
 
 class ScrapeRequest(BaseModel):
-    query_type: str          # "Q1".."Q5"
+    query_type: str
     params: dict[str, Any] = {}
 
 
@@ -24,9 +22,9 @@ async def lifespan(app: FastAPI):
     with open(TEAMS_PATH, encoding="utf-8") as f:
         raw = json.load(f)
     _teams_by_code = {t["code"]: t for t in raw["teams"]}
-
     await scraper.init_browser()
     yield
+    await scraper.close_browser()
 
 
 app = FastAPI(lifespan=lifespan)
@@ -75,14 +73,4 @@ async def scrape(req: ScrapeRequest):
     except KeyError as e:
         raise HTTPException(status_code=422, detail=f"Falta parámetro requerido: {e}")
     except Exception as e:
-        # En Entrega 2 esto se conecta con el mecanismo de fallback.
-        raise HTTPException(status_code=502, detail=f"Error de scraping: {e}")
-
-
-@app.get("/debug")
-async def debug():
-    import os
-    os.makedirs("/app/debug", exist_ok=True)
-    r5 = await scraper.debug_screenshot(scraper.URLS["standings"], "standings.png")
-    r4 = await scraper.debug_screenshot(scraper.URLS["fixtures"], "fixtures.png")
-    return {"standings": r5, "fixtures": r4}
+        raise HTTPException(status_code=502, detail=f"Error de scraping: {e}")  

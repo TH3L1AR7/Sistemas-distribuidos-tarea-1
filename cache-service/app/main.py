@@ -8,7 +8,7 @@ from typing import Any
 from contextlib import asynccontextmanager
 from . import cache_backend
 
-app = FastAPI()
+
 
 SCRAPER_URL = os.getenv("SCRAPER_URL", "http://scraper-service:8000")
 METRICS_URL = os.getenv("METRICS_URL", "http://metrics-service:8000")
