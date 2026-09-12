@@ -47,11 +47,14 @@ services:
     build: ./traffic-generator
     volumes:
       - ./shared:/shared:ro
+      - ./experiments/results:/app/results
     depends_on:
       - cache-service
     environment:
       - CACHE_URL=http://cache-service:8000
-      - DISTRIBUTION=${DISTRIBUTION:-uniform}
-      - TOTAL_REQUESTS=${TOTAL_REQUESTS:-500}
-      - ARRIVAL_RATE=${ARRIVAL_RATE:-10}
-      - ZIPF_PARAM=${ZIPF_PARAM:-1.5}
+      - TEAMS_FILE=/shared/teams.json
+      - RESULTS_DIR=/app/results
+      - GEN_DIST=${DISTRIBUTION:-uniform}
+      - GEN_RATE=${ARRIVAL_RATE:-10}
+      - GEN_REQUESTS=${TOTAL_REQUESTS:-500}
+      - GEN_ZIPF_S=${ZIPF_PARAM:-1.5}

@@ -216,16 +216,3 @@ def _to_int(value: str) -> int:
         return 0
 
 
-async def debug_screenshot(url: str, filename: str) -> dict:
-    import os
-    os.makedirs("/app/debug", exist_ok=True)
-    async with scrape_page() as page:
-        await page.goto(url, wait_until="domcontentloaded")
-        await page.wait_for_timeout(3000)
-        await page.screenshot(path=f"/app/debug/{filename}", full_page=True)
-        html = await page.content()
-        with open(f"/app/debug/{filename}.html", "w", encoding="utf-8") as f:
-            f.write(html)
-        rows_q5 = len(await page.query_selector_all("div.ui-table__row"))
-        rows_q4 = len(await page.query_selector_all("div.event__match"))
-        return {"rows_ui_table": rows_q5, "rows_event_match": rows_q4}
